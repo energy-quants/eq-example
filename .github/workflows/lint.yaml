@@ -78,12 +78,11 @@ jobs:
           size=$(stat --printf="%s" "${filename}")
           if [ $exitcode -eq 0 ] && [ $size -eq 0 ]; then
             echo "::notice::No lint detected :rocket:!"
-            echo "has_lint='false'" >> "${GITHUB_OUTPUT}"
+            echo "has_lint=false" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
-          echo "::error::Lint detected!"
-          echo "has_lint='true'" >> "${GITHUB_OUTPUT}"
-          echo "patch_file='${filename}'" >> "${GITHUB_OUTPUT}"
+          echo "has_lint=true" >> "${GITHUB_OUTPUT}"
+          echo "patch_file=${filename}" >> "${GITHUB_OUTPUT}"
           echo "Use the below commands to apply the patch:" >> "${GITHUB_STEP_SUMMARY}"
           echo '```bash' >> "${GITHUB_STEP_SUMMARY}"
           echo "gh run download $GITHUB_RUN_ID -n $filename" >> "${GITHUB_STEP_SUMMARY}"
