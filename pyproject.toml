@@ -87,6 +87,16 @@ run = [
     "python =3.10.*",
     "click >=8.1.3",
 ]
+test = [
+  "ansi2html",
+  "coverage",
+  "hypothesis",
+  "pytest",
+  "pytest-cov",
+  "pytest-doctestplus",
+  "pytest-html",
+  "toml",
+]
 
 # [tool.boa.test]
 # imports = ["eq.lib.example"]
@@ -102,7 +112,7 @@ license_file = "{{ pyproject.project.license.file }}"
 # https://docs.pytest.org/en/7.1.x/reference/reference.html#ini-options-ref
 minversion = "7.3"
 testpaths = ["tests"]
-addopts = "-lv --color=yes --code-highlight=yes --import-mode=importlib --doctest-modules --doctest-continue-on-failure --junit-xml=reports/test-results.xml  --cov=src/eq/lib/example --cov-report=html:reports/htmlcov --cov-report xml:reports/coverage.xml"
+addopts = "-lv --tb=short --color=yes --code-highlight=yes --import-mode=importlib --doctest-modules --doctest-continue-on-failure --html=.build/test/html/test-report.html --self-contained-html --junit-xml=.build/test/test-results.xml  --cov=src/eq/lib/example --cov-report=html:.build/test/html/cov --cov-report=xml:.build/test/coverage.xml"
 junit_family = "xunit2"
 log_cli = true
 log_cli_level = "INFO"
