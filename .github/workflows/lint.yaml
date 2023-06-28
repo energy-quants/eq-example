@@ -44,7 +44,7 @@ jobs:
           echo "::endgroup::"
       - id: setup_micromamba
         # https://github.com/mamba-org/setup-micromamba
-        name: Setup micromamba
+        name: Create Python Environment
         uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: '1.4.4-0'
@@ -58,12 +58,19 @@ jobs:
             black=23.3.0
             isort=5.12.0
             ruff=0.0.275
+      - id: checkout_source
+        name: Checkout Source
+        uses: actions/checkout@v3
       - id: lint_python
-        name: Show Debug Info
-        shell: bash
+        name: Lint Python Code
+        shell: bash -el {0}
         run: |
           # Run linters
           micromamba env list
+          set -euox pipefail
+          pwd
+          ls -la
+          tree .
           ruff check --fix ./src
           black --preview ./src
           isort ./src
