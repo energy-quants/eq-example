@@ -1,0 +1,42 @@
+name: Lint
+run-name: ${{
+    format(
+      '[{0}] Build Packages',
+      (github.event_name == 'pull_request' && format('pr/{0}', github.event.number)) ||
+      (github.event_name == 'push' && github.ref_name) ||
+      (github.event_name == 'release' && github.event.release.tag_name) ||
+       github.event_name
+    )
+  }}
+
+
+on:
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  lint:
+    name: Lint Python
+    runs-on: ubuntu-latest
+    steps:
+      - id: show_debug_info
+        name: Debug Info
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "::group::User Info"
+          id
+          echo "::endgroup::"
+          echo "::group::Environment Variables"
+          env | sort
+          echo "::endgroup::"
+          echo "::group::GitHub Context"
+          echo "${GITHUB_CONTEXT}"
+          echo "::endgroup::"
+          echo "::group::Git Info"
+          which git
+          git --version
+          echo "::endgroup::"
