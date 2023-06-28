@@ -1,7 +1,7 @@
 name: Lint
 run-name: ${{
     format(
-      '[{0}] Build Packages',
+      '[{0}] Run Linters',
       (github.event_name == 'pull_request' && format('pr/{0}', github.event.number)) ||
       (github.event_name == 'push' && github.ref_name) ||
       (github.event_name == 'release' && github.event.release.tag_name) ||
@@ -22,21 +22,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: show_debug_info
-        name: Debug Info
+        name: Show Debug Info
         shell: bash
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
+          # Show Debug Info
           echo "::group::User Info"
           id
           echo "::endgroup::"
-          echo "::group::Environment Variables"
-          env | sort
-          echo "::endgroup::"
           echo "::group::GitHub Context"
           echo "${GITHUB_CONTEXT}"
+          echo "::endgroup::"
+          echo "::group::Environment Variables"
+          unset GITHUB_CONTEXT
+          env | sort
           echo "::endgroup::"
           echo "::group::Git Info"
           which git
           git --version
           echo "::endgroup::"
+      - id: setup_micromamba
+        # https://github.com/mamba-org/setup-micromamba
+        name: Setup micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: '1.4.4-0'
+          cache-environment: true
+          condarc: |
+            channels:
+              - conda-forge
+          environment-name: lint
+          create-args: >-
+            python=3.10
+            black=23.3.0
+            isort=5.12.0
+            ruff=0.0.275
+      - id: lint_python
+        name: Show Debug Info
+        shell: bash
+        run: |
+          # Run linters
+          micromamba env list
+          ruff check --fix ./src
+          black --preview ./src
+          isort ./src
+
