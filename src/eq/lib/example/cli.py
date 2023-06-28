@@ -1,6 +1,5 @@
 import click
 
-
 from . import __version__
 
 
