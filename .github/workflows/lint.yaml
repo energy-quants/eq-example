@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v3
       - id: lint_python
         name: Lint Python Code
-        shell: bash -el {0}
+        shell: bash -l {0}
         run: |
           # Run linters
           set -euox pipefail
@@ -79,6 +79,7 @@ jobs:
           if [ $exitcode -eq 0 ] && [ $size -eq 0 ]; then
             echo "::notice::No lint detected!"
             echo "has_lint=false" >> "${GITHUB_OUTPUT}"
+            set +e
             exit 0
           else
             echo "has_lint=true" >> "${GITHUB_OUTPUT}"
