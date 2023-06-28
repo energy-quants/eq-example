@@ -66,12 +66,37 @@ jobs:
         shell: bash -el {0}
         run: |
           # Run linters
-          micromamba env list
           set -euox pipefail
-          pwd
-          ls -la
-          tree .
+          set +e
           ruff check --fix ./src
+          exitcode=$?
+          set -e
           black --preview ./src
           isort ./src
-
+          filename="lint-src.patch"
+          git diff --no-color > "${filename}"
+          size=$(stat --printf="%s" "${filename}")
+          if [ $exitcode -eq 0 ] && [ $size -eq 0 ]; then
+            echo "::notice::No lint detected :rocket:!"
+            echo "has_lint='false'" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          echo "::error::Lint detected!"
+          echo "has_lint='true'" >> "${GITHUB_OUTPUT}"
+          echo "patch_file='${filename}'" >> "${GITHUB_OUTPUT}"
+          echo "Use the below commands to apply the patch:" >> "${GITHUB_STEP_SUMMARY}"
+          echo '```bash' >> "${GITHUB_STEP_SUMMARY}"
+          echo "gh run download $GITHUB_RUN_ID -n $filename" >> "${GITHUB_STEP_SUMMARY}"
+          echo "git apply $filename" >> "${GITHUB_STEP_SUMMARY}"
+          echo '```' >> "${GITHUB_STEP_SUMMARY}"
+          echo '```diff' >> "${GITHUB_STEP_SUMMARY}"
+          cat "${filename}" >> "${GITHUB_STEP_SUMMARY}"
+          echo '```' >> "${GITHUB_STEP_SUMMARY}"
+          exit 1
+      - id: upload_patch
+        name: Upload Patch File
+        if: failure() && steps.lint_python.outputs.has_lint == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.lint_python.outputs.patch_file }}
+          path: ${{ steps.lint_python.outputs.patch_file }}
