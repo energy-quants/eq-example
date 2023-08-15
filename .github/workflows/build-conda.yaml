@@ -1,0 +1,85 @@
+name: build/conda
+run-name: ${{
+    format(
+      '[{0}] Build/Conda',
+      (github.event_name == 'pull_request' && format('pr/{0}', github.event.number)) ||
+      (github.event_name == 'push' && github.ref_name) ||
+      (github.event_name == 'release' && github.event.release.tag_name) ||
+       github.event_name
+    )
+  }}
+
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+
+  build_package:
+    name: Build Conda Package
+    runs-on: ubuntu-latest
+    steps:
+      - id: show_debug_info
+        name: Show Debug Info
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          # Show Debug Info
+          echo "::group::User Info"
+          id
+          echo "::endgroup::"
+          echo "::group::GitHub Context"
+          echo "${GITHUB_CONTEXT}"
+          echo "::endgroup::"
+          echo "::group::Environment Variables"
+          unset GITHUB_CONTEXT
+          env | sort
+          echo "::endgroup::"
+          echo "::group::Git Info"
+          which git
+          git --version
+          echo "::endgroup::"
+      - id: setup_micromamba
+        name: Create Python Environment
+        # https://github.com/mamba-org/setup-micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: '1.4.9-0'
+          cache-environment: true
+          condarc: |
+            channels:
+              - conda-forge
+              - energy-quants
+          environment-name: build
+          create-args: >-
+            python=3.11
+            eq-devtools>=0.2.3
+      - id: checkout_source
+        name: Checkout Source
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - id: build_package
+        name: Build Package
+        shell: bash -l {0}
+        run: |
+          # Run linters
+          set -euox pipefail
+          set +e
+          devtool --version
+          devtool conda build
+      # - id: upload_package
+      #   name: Upload Package
+      #   # https://github.com/actions/upload-artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ steps.lint_python.outputs.patch_file }}
+      #     path: ${{ steps.lint_python.outputs.patch_file }}
