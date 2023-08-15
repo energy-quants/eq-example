@@ -76,10 +76,10 @@ jobs:
           set +e
           devtool --version
           devtool conda build
-      # - id: upload_package
-      #   name: Upload Package
-      #   # https://github.com/actions/upload-artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ steps.lint_python.outputs.patch_file }}
-      #     path: ${{ steps.lint_python.outputs.patch_file }}
+      - id: publish_artifact
+        name: Publish Artifact
+        # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: conda-channel
+          path: .build/conda/dist
