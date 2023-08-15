@@ -10,6 +10,9 @@
 
 ## Development
 
+
+### Linting
+
 The project is configured to use `black`, `isort` and `ruff` for linting.
 These tools may be manually run as below:
 ```

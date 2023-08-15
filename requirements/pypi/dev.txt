@@ -1,0 +1,7 @@
+black ==23.7.0
+eq-devtool >=0.2.3
+hatch-vcs
+hatchling
+isort
+ruff ==0.0.276
+setuptools-scm >=7.1.0
