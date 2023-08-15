@@ -1,7 +1,7 @@
-name: Lint
+name: lint/python
 run-name: ${{
     format(
-      '[{0}] Run Linters',
+      '[{0}] lint/python',
       (github.event_name == 'pull_request' && format('pr/{0}', github.event.number)) ||
       (github.event_name == 'push' && github.ref_name) ||
       (github.event_name == 'release' && github.event.release.tag_name) ||
