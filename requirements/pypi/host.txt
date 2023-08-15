@@ -1,0 +1,5 @@
+python >=3.11
+hatch-requirements-txt
+hatch-vcs
+hatchling
+pip
