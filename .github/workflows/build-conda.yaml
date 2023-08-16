@@ -71,11 +71,13 @@ jobs:
         name: Build Package
         shell: bash -l {0}
         run: |
-          # Run linters
           set -euox pipefail
-          set +e
           devtool --version
           devtool conda build
+          echo "Use the below commands to install the package:" >> "${GITHUB_STEP_SUMMARY}"
+          echo '```bash' >> "${GITHUB_STEP_SUMMARY}"
+          echo "gh run download $GITHUB_RUN_ID -n conda-channel >> "${GITHUB_STEP_SUMMARY}"
+          echo '```' >> "${GITHUB_STEP_SUMMARY}"
       - id: publish_artifact
         name: Publish Artifact
         # https://github.com/actions/upload-artifact
