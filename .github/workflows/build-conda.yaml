@@ -76,7 +76,7 @@ jobs:
           devtool conda build
           echo "Use the below commands to install the package:" >> "${GITHUB_STEP_SUMMARY}"
           echo '```bash' >> "${GITHUB_STEP_SUMMARY}"
-          echo "gh run download $GITHUB_RUN_ID -n conda-channel" >> "${GITHUB_STEP_SUMMARY}"
+          echo "gh run download $GITHUB_RUN_ID -n conda-channel --dir .build/conda/dist" >> "${GITHUB_STEP_SUMMARY}"
           echo '```' >> "${GITHUB_STEP_SUMMARY}"
       - id: publish_artifact
         name: Publish Artifact
