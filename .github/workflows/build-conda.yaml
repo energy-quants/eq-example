@@ -11,15 +11,56 @@ run-name: ${{
 
 
 on:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
   push:
     branches:
       - main
+
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
   pull_request:
     branches:
       - main
+
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release
+  release:
+    types: [published]
 
 
 jobs:
   build_package:
     name: Build Conda Package
     uses: energy-quants/.github/.github/workflows/build-conda.yml@main
+  publish_package:
+    name: Publish OCI Artifact
+    needs: build_package
+    runs-on: ubuntu-latest
+    steps:
+      - id: show_debug_info
+        name: Show Debug Info
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          # Show Debug Info
+          echo "::group::User Info"
+          id
+          echo "::endgroup::"
+          echo "::group::GitHub Context"
+          echo "${GITHUB_CONTEXT}"
+          echo "::endgroup::"
+          echo "::group::Environment Variables"
+          unset GITHUB_CONTEXT
+          env | sort
+          echo "::endgroup::"
+          echo "::group::Git Info"
+          which git
+          git --version
+          echo "::endgroup::"
+
+      - id: download_artifact
+        name: Download Package
+        uses: actions/download-artifact@v3
+        with:
+          name: conda-channel
+          path: ./conda-local
+
