@@ -64,3 +64,11 @@ jobs:
           name: conda-channel
           path: ./conda-local
 
+      - id: publish_package
+        name: Publish Package
+        shell: bash -l {0}
+        run: |
+          set -euox pipefail
+          devtool --version
+          tree ./conda-local
+
