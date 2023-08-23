@@ -57,6 +57,22 @@ jobs:
           git --version
           echo "::endgroup::"
 
+      - id: setup_micromamba
+        name: Create Python Environment
+        # https://github.com/mamba-org/setup-micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: '1.4.9-0'
+          cache-environment: true
+          condarc: |
+            channels:
+              - conda-forge
+              - energy-quants
+          environment-name: build
+          create-args: >-
+            python=3.11
+            eq-devtools>=0.3.2
+
       - id: download_artifact
         name: Download Package
         uses: actions/download-artifact@v3
