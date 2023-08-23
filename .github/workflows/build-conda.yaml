@@ -83,6 +83,8 @@ jobs:
       - id: publish_package
         name: Publish Package
         shell: bash -l {0}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euox pipefail
           devtool --version
