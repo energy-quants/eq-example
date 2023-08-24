@@ -90,5 +90,5 @@ jobs:
           devtool --version
           tree ./conda-local
           for filepath in  $(find "./conda-local" -type f -name "*.conda"); do
-            devtool conda publish -v --owner='energy-quants' --filepath="${filepath}"
+            devtool conda publish -v --debug --owner='energy-quants' --filepath="${filepath}"
           done
