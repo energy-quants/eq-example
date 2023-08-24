@@ -89,6 +89,7 @@ jobs:
           set -euox pipefail
           devtool --version
           tree ./conda-local
+          env | sort
           for filepath in  $(find "./conda-local" -type f -name "*.conda"); do
             devtool conda publish -v --debug --owner='energy-quants' --filepath="${filepath}"
           done
