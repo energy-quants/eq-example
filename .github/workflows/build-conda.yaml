@@ -71,7 +71,7 @@ jobs:
           environment-name: build
           create-args: >-
             python=3.11
-            eq-devtools>=0.3.2
+            eq-devtools>=0.3.3
 
       - id: download_artifact
         name: Download Package
