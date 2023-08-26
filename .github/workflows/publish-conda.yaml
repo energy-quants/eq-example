@@ -22,3 +22,5 @@ jobs:
     name: Publish Conda Package
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: energy-quants/.github/.github/workflows/publish-conda.yml@main
+    secrets:
+      token: ${{ secrets.CI_PACKAGES }}
