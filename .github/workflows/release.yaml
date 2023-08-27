@@ -1,0 +1,46 @@
+name: github/release
+run-name: github/release
+
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - id: show_debug_info
+        name: Show Debug Info
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          # Show Debug Info
+          echo "::group::User Info"
+          id
+          echo "::endgroup::"
+          echo "::group::GitHub Context"
+          echo "${GITHUB_CONTEXT}"
+          echo "::endgroup::"
+          echo "::group::Environment Variables"
+          unset GITHUB_CONTEXT
+          env | sort
+          echo "::endgroup::"
+          echo "::group::Git Info"
+          which git
+          git --version
+          echo "::endgroup::"
+
+      - id: checkout_source
+        name: Checkout Source
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v3
+
+      - id: create_release
+        name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          generate_release_notes: true
