@@ -16,28 +16,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - id: show_debug_info
-        name: Show Debug Info
-        shell: bash
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          # Show Debug Info
-          echo "::group::User Info"
-          id
-          echo "::endgroup::"
-          echo "::group::GitHub Context"
-          echo "${GITHUB_CONTEXT}"
-          echo "::endgroup::"
-          echo "::group::Environment Variables"
-          unset GITHUB_CONTEXT
-          env | sort
-          echo "::endgroup::"
-          echo "::group::Git Info"
-          which git
-          git --version
-          echo "::endgroup::"
-
       - id: checkout_source
         name: Checkout Source
         # https://github.com/actions/checkout
