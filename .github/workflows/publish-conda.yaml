@@ -16,15 +16,58 @@ on:
     workflows: ['build/conda']
     types:
       - completed
+      - requested
 
 
 permissions: write-all
 
 
 jobs:
-  build_package:
+  set_status:
+    name: Set Status
+    if: github.event.action == 'requested'
+    runs-on: ubuntu-latest
+    steps:
+      - id: show_debug_info
+        name: Show Debug Info
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          # Show Debug Info
+          echo "::group::User Info"
+          id
+          echo "::endgroup::"
+          echo "::group::GitHub Context"
+          echo "${GITHUB_CONTEXT}"
+          echo "::endgroup::"
+          echo "::group::Environment Variables"
+          unset GITHUB_CONTEXT
+          env | sort
+          echo "::endgroup::"
+          echo "::group::Git Info"
+          which git
+          git --version
+          echo "::endgroup::"
+      - id: set_status
+        name: Set Pending
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euox pipefail
+          # https://docs.github.com/en/rest/commits/statuses?apiVersion=2022-11-28#create-a-commit-status
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/statuses/${{ github.event.workflow_run.head_commit.id }} \
+            -f state='pending' \
+            -f context='publish/conda'
+
+  publish_package:
     name: Publish Conda Package
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.action == 'completed'
     uses: energy-quants/.github/.github/workflows/publish-conda.yml@main
     secrets:
       token: ${{ secrets.CI_PACKAGES }}
