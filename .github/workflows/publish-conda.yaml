@@ -20,7 +20,8 @@ on:
       - requested
 
 
-permissions: write-all
+permissions:
+  statuses: write
 
 
 jobs:
