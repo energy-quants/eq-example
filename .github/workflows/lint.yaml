@@ -5,7 +5,7 @@ run-name: ${{
       (github.event_name == 'pull_request' && format('pr/{0}', github.event.number)) ||
       (github.event_name == 'push' && github.ref_name) ||
       (github.event_name == 'release' && github.event.release.tag_name) ||
-       github.event_name
+        github.event_name
     )
   }}
 
